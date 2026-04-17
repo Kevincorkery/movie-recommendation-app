@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.movie_api import search_movie_by_title
+from app.db import get_supabase
 
 main = Blueprint("main", __name__)
 
@@ -24,3 +25,32 @@ def search():
         return jsonify(result), 404
 
     return jsonify(result)
+
+@main.route("/test-db")
+def test_db():
+    supabase = get_supabase()
+    result = supabase.table("favorites").select("*").execute()
+    return jsonify(result.data)
+
+@main.route("/favorites", methods=["GET"])
+def get_favorites():
+    supabase = get_supabase()
+    result = supabase.table("favorites").select("*").execute()
+    return jsonify(result.data)
+
+@main.route("/favorites", methods=["POST"])
+def add_favorite():
+    supabase = get_supabase()
+    data = request.get_json()
+
+    if not data or "title" not in data:
+        return jsonify({"error": "title is required"}), 400
+
+    result = supabase.table("favorites").insert({
+        "title": data["title"],
+        "imdb_id": data.get("imdb_id"),
+        "year": data.get("year"),
+        "poster": data.get("poster")
+    }).execute()
+
+    return jsonify(result.data)
