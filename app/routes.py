@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from app.movie_api import search_movie_by_title
 from app.db import get_supabase
+import requests
 
 main = Blueprint("main", __name__)
 
@@ -54,3 +55,25 @@ def add_favorite():
     }).execute()
 
     return jsonify(result.data)
+
+@main.route("/status")
+def status():
+    omdb_configured = bool(current_app.config.get("OMDB_API_KEY"))
+
+    database_connected = False
+
+    try:
+        supabase = get_supabase()
+        response = supabase.table("favorites").select("*").limit(1).execute()
+
+        if response is not None:
+            database_connected = True
+
+    except Exception as e:
+        print("DB error:", e)
+
+    return jsonify({
+        "status": "ok",
+        "omdb_configured": omdb_configured,
+        "database_connected": database_connected
+    })
