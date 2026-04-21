@@ -88,3 +88,24 @@ def status():
         "omdb_configured": omdb_configured,
         "database_connected": database_connected
     })
+
+@main.route("/save-favorite", methods=["POST"])
+def save_favorite():
+    supabase = get_supabase()
+
+    title = request.form.get("title")
+    imdb_id = request.form.get("imdb_id")
+    year = request.form.get("year")
+    poster = request.form.get("poster")
+
+    if not title:
+        return render_template("index.html", error="Could not save movie.")
+
+    supabase.table("favorites").insert({
+        "title": title,
+        "imdb_id": imdb_id,
+        "year": year,
+        "poster": poster
+    }).execute()
+
+    return render_template("index.html", message=f"{title} saved to favorites.")
