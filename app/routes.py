@@ -1,13 +1,24 @@
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app, render_template
 from app.movie_api import search_movie_by_title
 from app.db import get_supabase
-import requests
 
 main = Blueprint("main", __name__)
 
-@main.route("/")
+@main.route("/", methods=["GET", "POST"])
 def home():
-    return jsonify({"message": "Movie service running"})
+    if request.method == "POST":
+        title = request.form.get("title")
+        if not title:
+            return render_template("index.html", error="Please enter a movie title.")
+
+        result = search_movie_by_title(title)
+
+        if "error" in result:
+            return render_template("index.html", error=result["error"])
+
+        return render_template("index.html", movie=result)
+
+    return render_template("index.html")
 
 @main.route("/health")
 def health():

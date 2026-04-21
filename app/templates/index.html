@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f7f7f7;
+        }
+        h1 {
+            color: #222;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 70%;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        }
+        img {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Search App</h1>
+
+    <form method="POST">
+        <input type="text" name="title" placeholder="Enter movie title" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if movie %}
+        <div class="result">
+            <h2>{{ movie.Title }}</h2>
+            <p><strong>Year:</strong> {{ movie.Year }}</p>
+            <p><strong>Genre:</strong> {{ movie.Genre }}</p>
+            <p><strong>Plot:</strong> {{ movie.Plot }}</p>
+            <p><strong>IMDb Rating:</strong> {{ movie.imdbRating }}</p>
+
+            {% if movie.Poster and movie.Poster != "N/A" %}
+                <img src="{{ movie.Poster }}" alt="Movie Poster">
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>
