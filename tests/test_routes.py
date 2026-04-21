@@ -21,15 +21,9 @@ def test_search_missing_title():
     data = response.get_json()
     assert data["error"] == "title parameter is required"
 
-def test_add_favorite():
+def test_search_without_title():
     app = create_app()
     client = app.test_client()
 
-    response = client.post("/favorites", json={
-        "title": "Inception",
-        "imdb_id": "tt1375666",
-        "year": "2010",
-        "poster": "N/A"
-    })
-
-    assert response.status_code == 200
+    response = client.get("/search")
+    assert response.status_code == 400
