@@ -20,3 +20,16 @@ def test_search_missing_title():
     assert response.status_code == 400
     data = response.get_json()
     assert data["error"] == "title parameter is required"
+
+def test_add_favorite():
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post("/favorites", json={
+        "title": "Inception",
+        "imdb_id": "tt1375666",
+        "year": "2010",
+        "poster": "N/A"
+    })
+
+    assert response.status_code == 200
